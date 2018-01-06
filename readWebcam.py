@@ -86,9 +86,6 @@ def imageprocessing(image_in):
 
     # _, thresh = cv2.threshold(image_in, 127, 255, 0)
 
-    cv2.imshow('frame', image_in)
-    cv2.waitKey(0)
-
     image_in = image_in[382: 700, 25: 1255]
 
     image = filter_colors(image_in)
@@ -130,38 +127,41 @@ def imageprocessing(image_in):
 
     # get the Point (XY) of mass of the contours
 
-    cnt = contours[0]
-    #print(len(cnt))
-    #print(cnt)
-    mass = cv2.moments(cnt)
-
-    # avoiding divisor of zero
-    if mass['m00'] == 0:
-        xmass = 1
+    if contours == 0:
+        print('No lines detected')
     else:
-        xmass = mass['m00']
+        cnt = contours[0]
+        #print(len(cnt))
+        #print(cnt)
+        mass = cv2.moments(cnt)
 
-    if mass['m00'] == 0:
-        ymass = 1
-    else:
-        ymass = mass['m00']
+        # avoiding divisor of zero
+        if mass['m00'] == 0:
+            xmass = 1
+        else:
+            xmass = mass['m00']
 
-    print(['m10'])
-    print(['m01'])
+        if mass['m00'] == 0:
+            ymass = 1
+        else:
+            ymass = mass['m00']
 
-    cx = int(mass['m10'] / xmass)
-    cy = int(mass['m01'] / ymass)
+        print(['m10'])
+        print(['m01'])
 
-    if cx > 585 and cx < 645 or 0:
-        lenkeinschlag = 'Keine Lenkbewegung'
-    elif cx <= 585:
-        lenkeinschlag = 'Rechts einlenken'
-    elif cx >= 645:
-        lenkeinschlag = 'Links einlenken'
-    else:
-        lenkeinschlag = 'Wird kalibriert'
+        cx = int(mass['m10'] / xmass)
+        cy = int(mass['m01'] / ymass)
 
-    print(cx, cy)
+        if cx > 585 and cx < 645 or 0:
+            lenkeinschlag = 'Keine Lenkbewegung'
+        elif cx <= 585:
+            lenkeinschlag = 'Rechts einlenken'
+        elif cx >= 645:
+            lenkeinschlag = 'Links einlenken'
+        else:
+            lenkeinschlag = 'Wird kalibriert'
+
+        print(cx, cy)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(masked_edges, lenkeinschlag, (591, 46), font, 2, (200, 255, 155), 3, cv2.LINE_AA)
@@ -178,11 +178,16 @@ def imageprocessing(image_in):
 
     """For Further image processung use annotated image as return"""
     #return annotated_image
+    cv2.imshow('frame', masked_edges)
+    cv2.waitKey(0)
     return masked_edges
 
 # Main Function
 device = -1
 cap = cv2.VideoCapture(device)
+
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 while(True):
     # Capture frame-by-frame
