@@ -275,24 +275,28 @@ def annotate_image_array(image_in):
 
 
     cnt = contours[0]
-    #print(len(cnt))
-    #print(cnt)
     mass = cv2.moments(cnt)
 
-    # avoiding divisor of zero
-    if mass['m00'] == 0:
-        xmass = 1
-    else:
-        xmass = mass['m00']
 
-    if mass['m00'] == 0:
+   # print(mass)
+
+    # avoiding divisor of zero
+    if mass['m00'] == 0.0:
+        mass['m00'] = 590
+        mass['m10'] = 590
+        mass['m01'] = 590
+        xmass = 1
         ymass = 1
     else:
+        xmass = mass['m00']
         ymass = mass['m00']
 
-    print(['m10'])
-    print(['m01'])
+    #if mass['m00'] == 0:
+        #ymass = 1
+    #else:
 
+
+    print(mass)
     cx = int(mass['m10'] / xmass)
     cy = int(mass['m01'] / ymass)
 
